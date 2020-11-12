@@ -18,9 +18,9 @@ const FormSearch: React.FC<Props> = ({
         type="text"
         value={value}
         onChange={handleOnChange}
-        placeholder="flowers red yellow, cards blue, pencil black..."
+        placeholder="Saisir une recherche..."
       />
-      <button type="submit">Search</button>
+      <button type="submit">Chercher</button>
     </form>
   );
 };

@@ -17,13 +17,13 @@ interface resData {
 }
 
 const Home = () => {
-  const [query, setQuery] = useState("video games, tech, sci-fi");
+  const [query, setQuery] = useState("ynov, dev, pc");
   const [searchResulst, setSearchResulst] = useState<resData[]>([]);
 
   const urlBuilder = (query: string) => {
     let cleanQuery = query.replace(/ /g, "+");
 
-    const key = process.env.REACT_APP_PIXABAY_KEY;
+    const key = '18992981-a4be0aaec3c7abcbbb0667425';
     const type = "photo";
     const url = `https://pixabay.com/api/?key=${key}&image_type=${type}&q=${cleanQuery}`;
 
@@ -83,8 +83,8 @@ const Home = () => {
   return (
     <>
       <Banner
-        title="Welcome to my Galery with Pixabay!"
-        description="Get the photos you need thanks to the Pixabay API."
+        title="YnovGalery!"
+        description="Use Pixabay API."
       />
       <Header title="Search in the Pixabay Gallery" />
       <FormSearch
@@ -94,8 +94,8 @@ const Home = () => {
       />
       <Wrapper>
         <Card
-          title="How to use?"
-          description='Separate with "," each search. You can query multiple at the same time. Example: "dogs, yellow rose, car red" 🎉'
+          title="Mode d'emploi?"
+          description='🎉 Séparez par "," chaque recherche. Vous pouvez interroger plusieurs en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉'
         />
         {searchResulst.map((item, index) => (
           <Card key={index} slider title={item.title} photos={item.photos} />
