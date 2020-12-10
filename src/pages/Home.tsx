@@ -5,6 +5,7 @@ import Wrapper from "../components/Wrapper/Wrapper";
 import Card from "../components/Card/Card";
 import FormSearch from "../components/FormSearch/FormSearch";
 
+import {_myFav} from '../types'
 export interface ImgData {
   largeImageURL: string;
   pageURL: string;
@@ -16,9 +17,12 @@ interface resData {
   photos: ImgData[];
 }
 
+
+
+
 const Home = () => {
   const [query, setQuery] = useState("covid, silicon valley, computer");
-  const [favoris, setFavoris] = useState([])
+  const [favoris, setFavoris] = useState<Array<_myFav>>([])
   const [searchResulst, setSearchResulst] = useState<resData[]>([]);
 
   const urlBuilder = (query: string) => {
@@ -37,7 +41,7 @@ const Home = () => {
 
     return data;
   };
-
+  
   const handleGetImages = async () => {
     const querys = query
       .split(",")
@@ -53,11 +57,11 @@ const Home = () => {
     if (urls.length > 0) {
       Promise.all(urls.map((url) => fetchHelper(url))).then((res) => {
         const data = res.map((item, index) => {
+          
           const album = {
             title: querys[index],
             photos: item.hits,
           };
-
           return album;
         });
 
@@ -68,7 +72,6 @@ const Home = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     handleGetImages();
   };
 
@@ -79,12 +82,17 @@ const Home = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [favoris]);
-
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(favoris)
     setQuery(e.target.value);
   };
 
+  const addPictureToFav = (newFav: _myFav) => {
+    let add = true
 
+    favoris.find(element => {if (element.id === newFav.id) add = false});
+    if (add === true) setFavoris([...favoris, newFav])
+  }
 
   return (
     <>
@@ -95,7 +103,7 @@ const Home = () => {
       />
       <Card
           title="Mode d'emploi?"
-          description='🎉 Séparez par "," chaque recherche. Vous pouvez chercher plusieurs catégories d`images en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉'
+          description='🎉 Séparez par "," chaque recherche. Vous pouvez chercher plusieurs catégories d`images en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉, Selectionnez une image pour afin de l`ajouter à vos favoris.'
         >
       <FormSearch
         value={query}
@@ -106,7 +114,7 @@ const Home = () => {
       <Wrapper>
         {favoris.length ? <Card slider description='Retrouvez ici les images que vous avez ajouter à vos favoris.' title='FAVORIS' photos={favoris}/> : <></>}
         {searchResulst.map((item, index) => (
-          <Card key={index} slider title={item.title} photos={item.photos} selectedFavoris={favoris}/>
+          <Card key={index} slider title={item.title} photos={item.photos} addPictureToFav={addPictureToFav}/>
         ))}
       </Wrapper>
     </>

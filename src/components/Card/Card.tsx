@@ -5,7 +5,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { ImgData } from "../../pages/Home";
 import ClassNames from "../../utils/classNames";
 import classes from "./Card.module.scss";
-
+import {_myFav} from '../../types'
 import logo from "./logo.svg";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   description?: string;
   slider?: boolean;
   photos?: ImgData[];
-  selectedFavoris?: any[];
+  addPictureToFav? : (newFav: _myFav) => void
 }
 
 const Card: React.FC<Props> = ({
@@ -24,14 +24,17 @@ const Card: React.FC<Props> = ({
   slider,
   photos,
   children,
-  selectedFavoris,
+  addPictureToFav
 }) => {
 
    const handleFavoris = (item: any) => {
-     if (selectedFavoris) {
-       selectedFavoris.push(item)
-     }
-   }
+     if (addPictureToFav) {addPictureToFav({
+      pageURL: item.pageURL,
+      largeImageURL: item.largeImageURL,
+      user: item.user,
+      id: item.id
+     })}
+  }
 
   return (
     <div
@@ -77,7 +80,7 @@ const Card: React.FC<Props> = ({
             {photos.map((item, index) => (
               <a
                 className={classes.imageLink}
-                /* href='{item.pageURL}' */
+                // href={item.pageURL}
                 // target="__blank"
                 key={item.pageURL}
                 onClick={() => handleFavoris(item) }
