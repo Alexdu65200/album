@@ -17,7 +17,8 @@ interface resData {
 }
 
 const Home = () => {
-  const [query, setQuery] = useState("ynov, dev, pc");
+  const [query, setQuery] = useState("covid, silicon valley, computer");
+  const [favoris, setFavoris] = useState([])
   const [searchResulst, setSearchResulst] = useState<resData[]>([]);
 
   const urlBuilder = (query: string) => {
@@ -73,32 +74,39 @@ const Home = () => {
 
   useEffect(() => {
     handleGetImages();
+    if(favoris) {
+      setFavoris(favoris)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [favoris]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
 
+
+
   return (
     <>
+    {navigator.onLine ? <div style={{color: 'green', fontWeight: 'bold'}}>Vous êtes en ligne </div> : <div style={{color: 'red', fontWeight: 'bold'}}>Vous êtes hors-ligne</div>}
       <Banner
         title="YnovGalery!"
-        description="Use Pixabay API."
+        description="Cette app utilise Pixabay API."
       />
-      <Header title="Search in the Pixabay Gallery" />
+      <Card
+          title="Mode d'emploi?"
+          description='🎉 Séparez par "," chaque recherche. Vous pouvez chercher plusieurs catégories d`images en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉'
+        >
       <FormSearch
         value={query}
         handleOnChange={handleOnChange}
         handleSubmit={handleSubmit}
       />
+      </Card>
       <Wrapper>
-        <Card
-          title="Mode d'emploi?"
-          description='🎉 Séparez par "," chaque recherche. Vous pouvez interroger plusieurs en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉'
-        />
+        {favoris.length ? <Card slider description='Retrouvez ici les images que vous avez ajouter à vos favoris.' title='FAVORIS' photos={favoris}/> : <></>}
         {searchResulst.map((item, index) => (
-          <Card key={index} slider title={item.title} photos={item.photos} />
+          <Card key={index} slider title={item.title} photos={item.photos} selectedFavoris={favoris}/>
         ))}
       </Wrapper>
     </>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -14,6 +14,7 @@ interface Props {
   description?: string;
   slider?: boolean;
   photos?: ImgData[];
+  selectedFavoris?: any[];
 }
 
 const Card: React.FC<Props> = ({
@@ -23,7 +24,15 @@ const Card: React.FC<Props> = ({
   slider,
   photos,
   children,
+  selectedFavoris,
 }) => {
+
+   const handleFavoris = (item: any) => {
+     if (selectedFavoris) {
+       selectedFavoris.push(item)
+     }
+   }
+
   return (
     <div
       className={ClassNames({
@@ -68,9 +77,10 @@ const Card: React.FC<Props> = ({
             {photos.map((item, index) => (
               <a
                 className={classes.imageLink}
-                href={item.pageURL}
-                target="__blank"
+                /* href='{item.pageURL}' */
+                // target="__blank"
                 key={item.pageURL}
+                onClick={() => handleFavoris(item) }
               >
                 <LazyLoadImage
                   src={item.largeImageURL}
