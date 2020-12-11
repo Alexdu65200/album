@@ -5,7 +5,7 @@ import Wrapper from "../components/Wrapper/Wrapper";
 import Card from "../components/Card/Card";
 import FormSearch from "../components/FormSearch/FormSearch";
 
-import {_myFav} from '../types'
+import { _myFav } from "../types";
 export interface ImgData {
   largeImageURL: string;
   pageURL: string;
@@ -17,18 +17,15 @@ interface resData {
   photos: ImgData[];
 }
 
-
-
-
 const Home = () => {
   const [query, setQuery] = useState("covid, silicon valley, computer");
-  const [favoris, setFavoris] = useState<Array<_myFav>>([])
+  const [favoris, setFavoris] = useState<Array<_myFav>>([]);
   const [searchResulst, setSearchResulst] = useState<resData[]>([]);
 
   const urlBuilder = (query: string) => {
     let cleanQuery = query.replace(/ /g, "+");
 
-    const key = '18992981-a4be0aaec3c7abcbbb0667425';
+    const key = "18992981-a4be0aaec3c7abcbbb0667425";
     const type = "photo";
     const url = `https://pixabay.com/api/?key=${key}&image_type=${type}&q=${cleanQuery}`;
 
@@ -41,7 +38,7 @@ const Home = () => {
 
     return data;
   };
-  
+
   const handleGetImages = async () => {
     const querys = query
       .split(",")
@@ -57,13 +54,15 @@ const Home = () => {
     if (urls.length > 0) {
       Promise.all(urls.map((url) => fetchHelper(url))).then((res) => {
         const data = res.map((item, index) => {
-          
           const album = {
             title: querys[index],
             photos: item.hits,
           };
           return album;
         });
+        if (storedData) {
+              setFavoris(JSON.parse(storedData))
+        }
 
         setSearchResulst(data);
       });
@@ -75,46 +74,82 @@ const Home = () => {
     handleGetImages();
   };
 
+const storedData = localStorage.getItem('favoris')
   useEffect(() => {
     handleGetImages();
-    if(favoris) {
-      setFavoris(favoris)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [favoris]);
+    
+/*     if (storedData) {
+      JSON.parse(storedData).map((data: any) => {
+          setFavoris([...favoris, data])
+      }) */
+        // setFavoris([...favoris, JSON.parse(storedData)]) 
+  /*      }  */  
+/*     if (favoris) {
+      setFavoris(favoris);
+    } */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(favoris)
     setQuery(e.target.value);
   };
 
   const addPictureToFav = (newFav: _myFav) => {
-    let add = true
+    let add = true;
 
-    favoris.find(element => {if (element.id === newFav.id) add = false});
-    if (add === true) setFavoris([...favoris, newFav])
-  }
+    favoris.find((element) => {
+      if (element.id === newFav.id) add = false;
+    });
+    if (add === true) {
+      setFavoris([...favoris, newFav]);
+      localStorage.setItem('favoris', JSON.stringify([...favoris, newFav]));
+    }
+    
+  };
 
   return (
     <>
-    {navigator.onLine ? <div style={{color: 'green', fontWeight: 'bold'}}>Vous êtes en ligne </div> : <div style={{color: 'red', fontWeight: 'bold'}}>Vous êtes hors-ligne</div>}
+      {navigator.onLine ? (
+        <div style={{ color: "green", fontWeight: "bold" }}>
+          Vous êtes en ligne{" "}
+        </div>
+      ) : (
+        <div style={{ color: "red", fontWeight: "bold" }}>
+          Vous êtes hors-ligne
+        </div>
+      )}
       <Banner
         title="YnovGalery!"
         description="Cette app utilise Pixabay API."
       />
       <Card
-          title="Mode d'emploi?"
-          description='🎉 Séparez par "," chaque recherche. Vous pouvez chercher plusieurs catégories d`images en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉, Selectionnez une image pour afin de l`ajouter à vos favoris.'
-        >
-      <FormSearch
-        value={query}
-        handleOnChange={handleOnChange}
-        handleSubmit={handleSubmit}
-      />
+        title="Mode d'emploi?"
+        description='🎉 Séparez par "," chaque recherche. Vous pouvez chercher plusieurs catégories d`images en même temps. Exemple: "chiens, rose jaune, voiture rouge" 🎉, Selectionnez une image pour afin de l`ajouter à vos favoris.'
+      >
+        <FormSearch
+          value={query}
+          handleOnChange={handleOnChange}
+          handleSubmit={handleSubmit}
+        />
       </Card>
       <Wrapper>
-        {favoris.length ? <Card slider description='Retrouvez ici les images que vous avez ajouter à vos favoris.' title='FAVORIS' photos={favoris}/> : <></>}
+        {favoris.length ? (
+          <Card
+            slider
+            description="Retrouvez ici les images que vous avez ajouter à vos favoris."
+            title="FAVORIS"
+            photos={favoris}
+          />
+        ) : (
+          <></>
+        )}
         {searchResulst.map((item, index) => (
-          <Card key={index} slider title={item.title} photos={item.photos} addPictureToFav={addPictureToFav}/>
+          <Card
+            key={index}
+            slider
+            title={item.title}
+            photos={item.photos}
+            addPictureToFav={addPictureToFav}
+          />
         ))}
       </Wrapper>
     </>

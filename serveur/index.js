@@ -5,12 +5,12 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
-const port = 3000;
+const port = 5000;
 
 let favoris = [];
 
 app.get("/", (request, response) => {
-    response.send("Hello World Of Warcraft");
+    response.send("Hello");
 });
 
 app.get("/favoris", (request, response) => {
